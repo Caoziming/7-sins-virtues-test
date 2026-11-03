@@ -106,6 +106,11 @@
   .track .t-s { background: linear-gradient(90deg, #3c3c46, #0e0e14); transition: width .4s; }
   .axis-note { font-size: 11px; color: #8c8c96; margin-top: 4px; }
   .retry { margin-top: 8px; }
+  .radar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+  .radar-box { border: 1px solid #2e2e38; border-radius: 12px; background: #191922; padding: 12px 6px 2px; }
+  .radar-title { text-align: center; font-size: 12px; letter-spacing: 4px; color: #8c8c96; margin-bottom: 2px; }
+  .radar-box svg { display: block; width: 100%; height: auto; }
+  @media (max-width: 520px) { .radar-grid { grid-template-columns: 1fr; } }
   .detail-title { margin: 32px 0 4px; font-size: 16px; letter-spacing: 2px; color: #d8b878; }
   .detail-title span { font-size: 11px; color: #8c8c96; letter-spacing: 0; }
   details.axis-detail {
@@ -412,6 +417,18 @@ function renderResult(ansByQ, shared) {
       '<div class="top-box virtue"><div class="label">你的主德</div><div class="name">' + AXES[topV].virtue + '</div><div class="quote">' + AXES[topV].virtueQuote + '</div></div>' +
     '</div>';
 
+  // 双雷达图: 左「七宗罪·夜」右「七美德·昼」
+  const vVals = pct.map(p => 100 - p);
+  html +=
+    '<div class="radar-grid">' +
+      '<div class="radar-box"><div class="radar-title">七宗罪 · 夜</div>' +
+        radarSvg(pct, AXES.map(a => a.sin), '#b9b9c8', 'rgba(185,185,200,.16)', '#9d9dac') +
+      '</div>' +
+      '<div class="radar-box"><div class="radar-title">七美德 · 昼</div>' +
+        radarSvg(vVals, AXES.map(a => a.virtue), '#e8cd96', 'rgba(232,205,150,.14)', '#c0aa6e') +
+      '</div>' +
+    '</div>';
+
   AXES.forEach((a, i) => {
     const lean = pct[i] >= 50
       ? '偏向<b style="color:#9d9dac">' + a.sin + '</b> ' + pct[i] + '%'
@@ -507,6 +524,40 @@ function toast(msg) {
   el.classList.add('show');
   clearTimeout(el._t);
   el._t = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// ---- 七维雷达图 (纯 SVG, 零依赖) ----
+function radarSvg(values, labels, stroke, fill, valueColor) {
+  const C = 150, R = 94, N = values.length;
+  const pt = (i, r) => {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / N;
+    return [C + r * Math.cos(a), C + r * Math.sin(a)];
+  };
+  let svg = '<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">';
+  [1 / 3, 2 / 3, 1].forEach(f => {
+    const ring = [];
+    for (let i = 0; i < N; i++) ring.push(pt(i, R * f).join(','));
+    svg += '<polygon points="' + ring.join(' ') + '" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>';
+  });
+  for (let i = 0; i < N; i++) {
+    const [x, y] = pt(i, R);
+    svg += '<line x1="' + C + '" y1="' + C + '" x2="' + x + '" y2="' + y + '" stroke="rgba(255,255,255,.07)" stroke-width="1"/>';
+  }
+  const poly = [];
+  for (let i = 0; i < N; i++) poly.push(pt(i, R * values[i] / 100).join(','));
+  svg += '<polygon points="' + poly.join(' ') + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="2" stroke-linejoin="round"/>';
+  for (let i = 0; i < N; i++) {
+    const [x, y] = pt(i, R * values[i] / 100);
+    svg += '<circle cx="' + x + '" cy="' + y + '" r="3" fill="' + stroke + '"/>';
+  }
+  for (let i = 0; i < N; i++) {
+    const [x, y] = pt(i, R + 26);
+    const anchor = x > C + 10 ? 'start' : (x < C - 10 ? 'end' : 'middle');
+    const dy = y < C - 10 ? -4 : (y > C + 10 ? 10 : 4);
+    svg += '<text x="' + x + '" y="' + (y + dy) + '" text-anchor="' + anchor + '" font-size="13" fill="#dcdce2">' + labels[i] +
+           '<tspan x="' + x + '" dy="15" font-size="10" fill="' + valueColor + '">' + values[i] + '%</tspan></text>';
+  }
+  return svg + '</svg>';
 }
 
 // 带分享参数打开时, 跳过答题直接还原结果
