@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>七宗罪 × 七美德 测试</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+    background: radial-gradient(ellipse at top, #16161d 0%, #0b0b10 70%);
+    color: #ececf0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 560px;
+    background: #16161c;
+    border: 1px solid #2e2e38;
+    border-top: 2px solid rgba(216,184,120,.35);
+    border-radius: 16px;
+    padding: 36px 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  }
+  h1 {
+    font-family: Georgia, "STZhongsong", "SimSun", serif;
+    text-align: center;
+    font-size: 26px;
+    letter-spacing: 4px;
+    color: #d8b878;
+    margin-bottom: 8px;
+  }
+  .divider {
+    width: 60px; height: 2px; margin: 14px auto 18px;
+    background: linear-gradient(90deg, #f2f2ea, #d8b878, #2b2b33);
+    border-radius: 2px;
+  }
+  p.desc { text-align: center; color: #aeaeb8; font-size: 14px; line-height: 1.8; margin-bottom: 26px; }
+  button.primary {
+    display: block; width: 100%;
+    padding: 13px; font-size: 16px; letter-spacing: 6px;
+    background: linear-gradient(135deg, #d8b878, #b8935a);
+    color: #14141a; font-weight: 600;
+    border: none; border-radius: 10px; cursor: pointer;
+    transition: transform .1s, opacity .15s;
+  }
+  button.primary:hover { opacity: .9; }
+  button.primary:active { transform: scale(.98); }
+
+  /* quiz */
+  .progress-wrap { background: #22222b; border-radius: 6px; height: 8px; margin-bottom: 10px; overflow: hidden; }
+  .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, #f2f2ea, #d8b878); transition: width .25s; }
+  .qcount { font-size: 12px; color: #8c8c96; margin-bottom: 20px; text-align: right; }
+  .qtext { font-size: 18px; line-height: 1.7; margin-bottom: 26px; min-height: 62px; }
+  .opts { display: grid; gap: 10px; }
+  .opt {
+    padding: 12px 16px; text-align: left; font-size: 15px;
+    background: #1e1e26; color: #dcdce2;
+    border: 1px solid #2e2e38; border-radius: 10px; cursor: pointer;
+    transition: background .12s, border-color .12s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .opt:hover { background: #2c2c35; border-color: #d8b878; }
+  .opt .k {
+    width: 22px; height: 22px; flex: none; border-radius: 6px;
+    background: #2e2e38; color: #d8b878; font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .back-btn {
+    margin-top: 18px; background: none; border: none; color: #8c8c96;
+    font-size: 13px; cursor: pointer; padding: 4px;
+  }
+  .back-btn:hover { color: #d8b878; }
+
+  /* result */
+  .result-headline {
+    font-family: Georgia, "STZhongsong", "SimSun", serif;
+    text-align: center; font-size: 24px; color: #d8b878;
+    letter-spacing: 3px; margin-bottom: 6px;
+    text-shadow: 0 0 24px rgba(216,184,120,.3);
+  }
+  .result-sub { text-align: center; color: #aeaeb8; font-size: 13px; margin-bottom: 24px; }
+  .top-boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .top-box { border-radius: 12px; padding: 14px; text-align: center; }
+  .top-box.sin { background: linear-gradient(180deg, #101016, #08080c); border: 1px solid rgba(180,180,200,.28); }
+  .top-box.virtue { background: linear-gradient(180deg, #fcfbf7, #e9e8e2); border: 1px solid rgba(244,244,240,.6); }
+  .top-box .label { font-size: 11px; letter-spacing: 2px; margin-bottom: 6px; }
+  .top-box.sin .label { color: #8b8b9c; }
+  .top-box.virtue .label { color: #8b8b95; }
+  .top-box .name { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .top-box.sin .name { color: #eceaf2; text-shadow: 0 0 14px rgba(200,200,230,.35); }
+  .top-box.virtue .name { color: #1c1c22; }
+  .top-box .quote { font-size: 12px; color: #aeaeb8; line-height: 1.6; }
+  .top-box.sin .quote { color: #9c9cae; }
+  .top-box.virtue .quote { color: #5e5e68; }
+  .axis { margin-bottom: 16px; }
+  .axis-head { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+  .axis-head .v { color: #f0f0ea; }
+  .axis-head .s { color: #9d9dac; }
+  .track { display: flex; height: 12px; border-radius: 7px; overflow: hidden; background: #22222b; box-shadow: inset 0 0 0 1px rgba(255,255,255,.05); }
+  .track .t-v { background: linear-gradient(90deg, #d9d8d2, #fffefb); transition: width .4s; }
+  .track .t-s { background: linear-gradient(90deg, #3c3c46, #0e0e14); transition: width .4s; }
+  .axis-note { font-size: 11px; color: #8c8c96; margin-top: 4px; }
+  .retry { margin-top: 8px; }
+  .detail-title { margin: 32px 0 4px; font-size: 16px; letter-spacing: 2px; color: #d8b878; }
+  .detail-title span { font-size: 11px; color: #8c8c96; letter-spacing: 0; }
+  details.axis-detail {
+    border: 1px solid #2e2e38; border-radius: 10px;
+    margin-top: 10px; background: #191922; overflow: hidden;
+  }
+  details.axis-detail summary {
+    padding: 12px 14px; cursor: pointer; list-style: none;
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    font-size: 14px;
+  }
+  details.axis-detail summary::-webkit-details-marker { display: none; }
+  details.axis-detail summary::after { content: '▸'; color: #8c8c96; transition: transform .15s; }
+  details.axis-detail[open] summary::after { transform: rotate(90deg); }
+  details.axis-detail[open] summary { border-bottom: 1px solid #2e2e38; }
+  .d-names { color: #ececf0; font-weight: 600; }
+  .d-lean { font-size: 12px; color: #8c8c96; white-space: nowrap; }
+  .d-verdict { padding: 12px 14px; font-size: 13px; line-height: 1.8; color: #c6c6cf; }
+  .q-item { padding: 10px 14px; border-top: 1px dashed #2e2e38; }
+  .q-main { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; font-size: 13px; color: #dcdce2; line-height: 1.6; }
+  .q-ans {
+    flex: none; font-size: 11px; padding: 2px 9px; border-radius: 20px;
+    background: #2c2c35; color: #aeaeb8; white-space: nowrap;
+  }
+  .q-ans.hot  { background: rgba(190,190,210,.14); color: #c6c6d4; }
+  .q-ans.cool { background: rgba(249,249,246,.85); color: #1c1c22; }
+  .q-ana { margin-top: 6px; font-size: 12px; line-height: 1.7; color: #8c8c96; }
+  .share-box { margin-top: 26px; }
+  .share-label { font-size: 12px; color: #8c8c96; margin-bottom: 8px; }
+  .share-row { display: flex; gap: 8px; }
+  #shareInput {
+    flex: 1; min-width: 0; padding: 10px 12px;
+    background: #1e1e26; border: 1px solid #2e2e38; border-radius: 10px;
+    color: #c6c6cf; font-size: 12px;
+  }
+  .copy-btn {
+    flex: none; padding: 10px 20px; border: none; border-radius: 10px;
+    background: linear-gradient(135deg, #d8b878, #b8935a);
+    color: #14141a; font-weight: 600; font-size: 14px; cursor: pointer;
+  }
+  .copy-btn:active { transform: scale(.97); }
+  .shared-banner {
+    text-align: center; font-size: 12px; line-height: 1.7;
+    color: #ecd29a; background: rgba(216,184,120,.08);
+    border: 1px solid rgba(216,184,120,.4);
+    border-radius: 8px; padding: 8px 12px; margin-bottom: 20px;
+  }
+  #toast {
+    position: fixed; left: 50%; bottom: 44px;
+    transform: translateX(-50%) translateY(12px);
+    background: #d8b878; color: #14141a;
+    padding: 9px 20px; border-radius: 24px; font-size: 13px; font-weight: 600;
+    opacity: 0; pointer-events: none; transition: all .25s; z-index: 99;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- 首页 -->
+  <div id="intro">
+    <h1>七宗罪 × 七美德</h1>
+    <div class="divider"></div>
+    <p class="desc">
+      28 道题,约 3 分钟。<br>
+      每一题都没有「正确答案」,凭直觉诚实作答。<br>
+      看看你灵魂的天平,偏向哪一侧。
+    </p>
+    <button class="primary" onclick="startQuiz()">开始测试</button>
+  </div>
+
+  <!-- 答题 -->
+  <div id="quiz" style="display:none">
+    <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+    <div class="qcount" id="qcount"></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="opts" id="opts"></div>
+    <button class="back-btn" id="backBtn" onclick="goBack()">← 上一题</button>
+  </div>
+
+  <!-- 结果 -->
+  <div id="result" style="display:none"></div>
+
+</div>
+
+<script>
+const AXES = [
+  { sin: '傲慢', virtue: '谦卑',
+    sinQuote: '你坚信自己是对的——而且通常也确实是对的。',
+    virtueQuote: '你不需要聚光灯,也能活得漂亮。',
+    verdict: {
+      sin: '在这个维度上你明显偏向傲慢:自信常会滑向「我说了算」,偶尔记得把话筒让给别人。',
+      mid: '傲慢与谦卑在你身上拉扯:多数时候听得进意见,偶尔还是想赢。',
+      virtue: '在这个维度上你偏向谦卑:不需要证明自己,反而让别人更愿意听你的。' } },
+  { sin: '嫉妒', virtue: '善良',
+    sinQuote: '别人的好消息,总让你五味杂陈。',
+    virtueQuote: '你的温柔,是别人世界里的意外之喜。',
+    verdict: {
+      sin: '在这个维度上你偏向嫉妒:别人的好运常会刺痛你,试着把「比较」换成「好奇」会轻松很多。',
+      mid: '善良与嫉妒并存:你会为他人的好事高兴,但偶尔也会心里泛酸。',
+      virtue: '在这个维度上你偏向善良:真心为别人高兴、也愿意付出,这种温柔很稀缺。' } },
+  { sin: '暴怒', virtue: '耐心',
+    sinQuote: '你的怒火来得快、去得快,但总会留下痕迹。',
+    virtueQuote: '泰山崩于前而面不改色,说的就是你。',
+    verdict: {
+      sin: '在这个维度上你偏向暴怒:火气来得快,事后又常后悔——值得给自己设一个「三秒规则」。',
+      mid: '暴怒与耐心并存:多数时候稳得住,但底线被碰时你会爆炸。',
+      virtue: '在这个维度上你偏向耐心:冷静是你的默认状态,冲突到你这里大多会被降级。' } },
+  { sin: '怠惰', virtue: '勤勉',
+    sinQuote: '万事皆有拖延的理由,明天永远更合适。',
+    virtueQuote: '说做就做,从不给拖延留机会。',
+    verdict: {
+      sin: '在这个维度上你偏向怠惰:拖延是常态,deadline 是唯一的生产力。',
+      mid: '怠惰与勤勉并存:赶得起来,也躺得下去,全看这件事在你心里的权重。',
+      virtue: '在这个维度上你偏向勤勉:说做就做,你的可靠度在别人眼里是加分项。' } },
+  { sin: '贪婪', virtue: '慷慨',
+    sinQuote: '「再多一点」是你的口头禅。',
+    virtueQuote: '分享,让你比占有更快乐。',
+    verdict: {
+      sin: '在这个维度上你偏向贪婪:「拥有」给你安全感,但永不满足也在悄悄抬高你的焦虑基线。',
+      mid: '贪婪与慷慨并存:该花的花、该守的守,占有欲还在可控范围。',
+      virtue: '在这个维度上你偏向慷慨:分享让你快乐,你相信给出去的会以别的方式回来。' } },
+  { sin: '暴食', virtue: '节制',
+    sinQuote: '快乐要尽兴,「停不下来」是常态。',
+    virtueQuote: '凡事有度,你握得住自己的遥控器。',
+    verdict: {
+      sin: '在这个维度上你偏向暴食:快乐面前刹不住车,「就这一次」通常不会只有一次。',
+      mid: '暴食与节制并存:大多数时候有度,但情绪上头时容易放纵。',
+      virtue: '在这个维度上你偏向节制:你是自己欲望的甲方,说停就停的底气很难得。' } },
+  { sin: '色欲', virtue: '贞洁',
+    sinQuote: '冲动,偶尔会跑在理智前面。',
+    virtueQuote: '欲望面前,你始终握有分寸。',
+    verdict: {
+      sin: '在这个维度上你偏向色欲:冲动经常跑在理智前面,记得给热情装个方向盘。',
+      mid: '色欲与贞洁并存:欣赏美但不越界,分寸感在线。',
+      virtue: '在这个维度上你偏向贞洁:欲望面前你握有分寸,内在始终排在外表前面。' } },
+];
+
+// axis: 维度下标; side: 'sin'(罪向陈述) / 'virtue'(德向陈述); ana: 题目解析
+const QUESTIONS = [
+  { axis: 0, side: 'sin',    text: '我觉得自己比大多数人都聪明。',
+    ana: '越同意,傲慢倾向越强。自信是好事,但「默认自己更聪明」容易让人听不进不同意见。' },
+  { axis: 0, side: 'sin',    text: '对我而言,承认「我错了」很难。',
+    ana: '越同意,越接近傲慢的核心——把自我正确感放在事实之上,错误往往被归咎于外界。' },
+  { axis: 0, side: 'virtue', text: '即使没人注意,我也愿意做正确的事。',
+    ana: '越同意,谦卑越强。不需要观众仍坚持原则,说明你的价值感来自内心而非他人目光。' },
+  { axis: 0, side: 'virtue', text: '我能坦然接受批评,并从中改进。',
+    ana: '越同意,谦卑越强。能把批评当养分而不是攻击,是谦卑最实用的表现。' },
+
+  { axis: 1, side: 'sin',    text: '看到朋友过得比我好,我心里会不舒服。',
+    ana: '越同意,嫉妒倾向越强。这种「酸」很常见,但长期积压会侵蚀友谊和自我评价。' },
+  { axis: 1, side: 'sin',    text: '我经常拿自己和别人比较,并感到不甘。',
+    ana: '越同意,嫉妒越强。适度比较是动力,过度比较则让幸福感永远取决于「别人」。' },
+  { axis: 1, side: 'virtue', text: '我会真心为他人的成功感到高兴。',
+    ana: '越同意,善良越强。能为他人的好运真心鼓掌,是内心丰盈的标志。' },
+  { axis: 1, side: 'virtue', text: '我愿意花时间帮助别人,不求回报。',
+    ana: '越同意,善良越强。不求回报的付出,最接近「善意」的本义。' },
+
+  { axis: 2, side: 'sin',    text: '被人激怒时,我很难控制自己的脾气。',
+    ana: '越同意,暴怒倾向越强。易燃的脾气,伤到的往往是最亲近的人。' },
+  { axis: 2, side: 'sin',    text: '我记仇,很久都无法释怀。',
+    ana: '越同意,暴怒越强。记仇等于让旧伤害在自己心里持续「免费续费」。' },
+  { axis: 2, side: 'virtue', text: '遇到不公平的事,我能冷静地处理。',
+    ana: '越同意,耐心越强。冷静不是认怂,而是把力气花在解决问题上。' },
+  { axis: 2, side: 'virtue', text: '排队久了、网络卡了,我也能心平气和。',
+    ana: '越同意,耐心越强。对小事的容忍度,最能反映真实的情绪修炼。' },
+
+  { axis: 3, side: 'sin',    text: '我经常把今天能做的事拖到明天。',
+    ana: '越同意,怠惰倾向越强。拖延的本质常常不是懒,而是回避「开始」。' },
+  { axis: 3, side: 'sin',    text: '一旦没人监督,我就会松懈下来。',
+    ana: '越同意,怠惰越强。他律撑得起短期,撑不起一生。' },
+  { axis: 3, side: 'virtue', text: '我会给自己定目标,并坚持完成。',
+    ana: '越同意,勤勉越强。能自己点火的人,不依赖外部闹钟。' },
+  { axis: 3, side: 'virtue', text: '接到的任务,我会尽快做完而不是拖到最后。',
+    ana: '越同意,勤勉越强。提前完成换来的从容,是最便宜的奢侈品。' },
+
+  { axis: 4, side: 'sin',    text: '无论已经拥有多少,我总想要更多。',
+    ana: '越同意,贪婪倾向越强。「再多一点」的快乐很短,焦虑却很长。' },
+  { axis: 4, side: 'sin',    text: '分东西的时候,我常常希望自己能多拿一点。',
+    ana: '越同意,贪婪越强。对份额的在意程度,反映占有欲的强度。' },
+  { axis: 4, side: 'virtue', text: '我乐于把自己拥有的东西分享出去。',
+    ana: '越同意,慷慨越强。分享的前提是相信「够用」,这本身就是一种富足感。' },
+  { axis: 4, side: 'virtue', text: '如果得到一笔意外之财,我会拿出一部分送人或捐出去。',
+    ana: '越同意,慷慨越强。意外之财的分配方式,往往暴露真实的价值观。' },
+
+  { axis: 5, side: 'sin',    text: '明明吃饱了,我还是会继续吃好吃的。',
+    ana: '越同意,暴食倾向越强。吃不再是需要,而是停不下来的惯性。' },
+  { axis: 5, side: 'sin',    text: '我常常沉迷于某件事到停不下来(追剧、游戏、刷手机)。',
+    ana: '越同意,暴食越强。现代的「暴食」早就不限于食物——任何吞噬时间的沉迷都算。' },
+  { axis: 5, side: 'virtue', text: '我吃东西讲究适量,很少暴饮暴食。',
+    ana: '越同意,节制越强。对入口的东西有分寸,是节制的第一课。' },
+  { axis: 5, side: 'virtue', text: '我能有节制地享受娱乐,说停就能停。',
+    ana: '越同意,节制越强。享受没有错,能「说停就停」才是掌控权的证明。' },
+
+  { axis: 6, side: 'sin',    text: '外表很容易吸引我,第一印象对我影响很大。',
+    ana: '越同意,色欲倾向越强。被外表吸引是本能,但让本能主导判断就是它的陷阱。' },
+  { axis: 6, side: 'sin',    text: '我对感兴趣的人,容易想入非非。',
+    ana: '越同意,色欲越强。幻想本身无害,失控的频率才是关键。' },
+  { axis: 6, side: 'virtue', text: '我对自己的感情和欲望很有分寸。',
+    ana: '越同意,贞洁越强。这里的「贞洁」不是禁欲,而是欲望面前仍保有分寸。' },
+  { axis: 6, side: 'virtue', text: '我更看重一个人的内在,而不是外表。',
+    ana: '越同意,贞洁越强。看重内在的人,欲望更难绑架选择。' },
+];
+
+const OPTS = ['非常不同意', '不同意', '一般', '同意', '非常同意'];
+
+let order = [];      // 洗牌后的题目下标顺序
+let answers = [];    // 与 order 对齐,记录 1-5
+let cur = 0;
+
+function shuffle(n) {
+  const a = [...Array(n).keys()];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function show(id) {
+  for (const s of ['intro', 'quiz', 'result']) {
+    document.getElementById(s).style.display = s === id ? '' : 'none';
+  }
+}
+
+function startQuiz() {
+  order = shuffle(QUESTIONS.length);
+  answers = new Array(QUESTIONS.length).fill(0);
+  cur = 0;
+  show('quiz');
+  renderQ();
+}
+
+function renderQ() {
+  const q = QUESTIONS[order[cur]];
+  document.getElementById('pbar').style.width = (cur / QUESTIONS.length * 100) + '%';
+  document.getElementById('qcount').textContent = '第 ' + (cur + 1) + ' / ' + QUESTIONS.length + ' 题';
+  document.getElementById('qtext').textContent = q.text;
+  const box = document.getElementById('opts');
+  box.innerHTML = '';
+  OPTS.forEach((t, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = '<span class="k">' + (i + 1) + '</span>' + t;
+    b.onclick = () => answer(i + 1);
+    box.appendChild(b);
+  });
+  document.getElementById('backBtn').style.visibility = cur === 0 ? 'hidden' : 'visible';
+}
+
+function answer(v) {
+  answers[cur] = v;
+  if (cur < QUESTIONS.length - 1) {
+    cur++;
+    renderQ();
+  } else {
+    finish();
+  }
+}
+
+function goBack() {
+  if (cur > 0) { cur--; renderQ(); }
+}
+
+let lastResult = null;   // 最近一次结果(原始题号 -> 作答), 供分享链接使用
+
+function finish() {
+  const ansByQ = {};   // 原始题号 -> 你的作答(1-5)
+  order.forEach((qi, i) => { ansByQ[qi] = answers[i]; });
+  renderResult(ansByQ);
+}
+
+function renderResult(ansByQ, shared) {
+  // 每个维度的「罪倾向」: 罪向题加分(0-4/题), 德向题反向加分; 每维度 2+2 题, 总分 0-16
+  const raw = AXES.map(() => 0);
+  QUESTIONS.forEach((q, qi) => {
+    raw[q.axis] += (q.side === 'sin') ? (ansByQ[qi] - 1) : (5 - ansByQ[qi]);
+  });
+  const pct = raw.map(r => Math.round(r / 16 * 100));
+  const avg = Math.round(pct.reduce((a, b) => a + b, 0) / pct.length);
+
+  const titles = [
+    [25,  '近乎圣人', '你基本上是行走的道德标尺,无懈可击。'],
+    [45,  '善良公民', '小毛病偶尔有,大方向永远正确。'],
+    [60,  '凡人本色', '罪与德势均力敌——这,就是人。'],
+    [80,  '小恶累累', '你心里住着一只不太安分的小恶魔。'],
+    [101, '地狱常客', '七宗罪董事会,正在为你预留席位。'],
+  ];
+  const t = titles.find(x => avg < x[0]);
+
+  const topSin = pct.indexOf(Math.max(...pct));
+  const topV = pct.indexOf(Math.min(...pct));
+
+  let html = shared
+    ? '<div class="shared-banner">这是朋友分享的测试结果 —— 想测自己的,拉到页面最下方点「我也要测一测」</div>'
+    : '';
+  html +=
+    '<div class="result-headline">' + t[1] + '</div>' +
+    '<div class="result-sub">罪德均势指数: <b>' + avg + '</b> / 100(越高越偏「罪」) · ' + t[2] + '</div>' +
+    '<div class="top-boxes">' +
+      '<div class="top-box sin"><div class="label">你的主罪</div><div class="name">' + AXES[topSin].sin + '</div><div class="quote">' + AXES[topSin].sinQuote + '</div></div>' +
+      '<div class="top-box virtue"><div class="label">你的主德</div><div class="name">' + AXES[topV].virtue + '</div><div class="quote">' + AXES[topV].virtueQuote + '</div></div>' +
+    '</div>';
+
+  AXES.forEach((a, i) => {
+    const lean = pct[i] >= 50
+      ? '偏向<b style="color:#9d9dac">' + a.sin + '</b> ' + pct[i] + '%'
+      : '偏向<b style="color:#f2f2ea">' + a.virtue + '</b> ' + (100 - pct[i]) + '%';
+    html +=
+      '<div class="axis">' +
+        '<div class="axis-head"><span class="v">' + a.virtue + '</span><span class="s">' + a.sin + '</span></div>' +
+        '<div class="track"><div class="t-v" style="width:' + (100 - pct[i]) + '%"></div><div class="t-s" style="width:' + pct[i] + '%"></div></div>' +
+        '<div class="axis-note">' + lean + '</div>' +
+      '</div>';
+  });
+
+  html +=
+    '<div class="share-box">' +
+      '<div class="share-label">' + (shared ? '想转发这条结果?复制下面的链接即可' : '复制链接,把你的结果分享给朋友') + '</div>' +
+      '<div class="share-row">' +
+        '<input id="shareInput" readonly onclick="this.select()" value="' + makeShareLink(ansByQ) + '">' +
+        '<button class="copy-btn" onclick="copyShareLink()">复制</button>' +
+      '</div>' +
+    '</div>';
+
+  html += '<div class="detail-title">详细解析 <span>(点开每个维度查看你的作答与逐题解读)</span></div>';
+
+  AXES.forEach((a, i) => {
+    const tier = pct[i] >= 65 ? 'sin' : (pct[i] <= 35 ? 'virtue' : 'mid');
+    const lean = pct[i] >= 50
+      ? '偏向' + a.sin + ' ' + pct[i] + '%'
+      : '偏向' + a.virtue + ' ' + (100 - pct[i]) + '%';
+    let items = '';
+    QUESTIONS.forEach((q, qi) => {
+      if (q.axis !== i) return;
+      const ans = ansByQ[qi];
+      const cls = ans >= 4 ? (q.side === 'sin' ? 'hot' : 'cool') : '';
+      items +=
+        '<div class="q-item">' +
+          '<div class="q-main"><span>' + q.text + '</span><span class="q-ans ' + cls + '">' + OPTS[ans - 1] + '</span></div>' +
+          '<div class="q-ana">' + q.ana + '</div>' +
+        '</div>';
+    });
+    html +=
+      '<details class="axis-detail">' +
+        '<summary><span class="d-names">' + a.virtue + ' × ' + a.sin + '</span><span class="d-lean">' + lean + '</span></summary>' +
+        '<p class="d-verdict">' + a.verdict[tier] + '</p>' +
+        items +
+      '</details>';
+  });
+
+  html += '<button class="primary retry" onclick="startQuiz()">' + (shared ? '我也要测一测' : '再测一次') + '</button>';
+  document.getElementById('result').innerHTML = html;
+  show('result');
+}
+
+// ---- 分享结果链接 ----
+function makeShareLink(ansByQ) {
+  // 作答按原始题号顺序拼成数字串放进 URL hash, 纯前端即可还原, 不需要服务器配合
+  const code = QUESTIONS.map((_, qi) => ansByQ[qi]).join('');
+  return location.href.split('#')[0] + '#r=' + code;
+}
+
+function copyText(text, cb) {
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    cb(ok);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => cb(true), fallback);
+  } else {
+    fallback();
+  }
+}
+
+function copyShareLink() {
+  copyText(document.getElementById('shareInput').value, ok =>
+    toast(ok ? '链接已复制,发给朋友即可查看同款结果' : '自动复制失败,请手动选中链接复制'));
+}
+
+function toast(msg) {
+  let el = document.getElementById('toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// 带分享参数打开时, 跳过答题直接还原结果
+(function () {
+  const m = location.hash.match(new RegExp('^#r=([1-5]{' + QUESTIONS.length + '})$'));
+  if (!m) return;
+  const ansByQ = {};
+  m[1].split('').forEach((c, qi) => { ansByQ[qi] = +c; });
+  renderResult(ansByQ, true);
+})();
+
+// 键盘: 1-5 作答, ← 回退
+document.addEventListener('keydown', e => {
+  if (document.getElementById('quiz').style.display === 'none') return;
+  if (e.key >= '1' && e.key <= '5') answer(+e.key);
+  else if (e.key === 'ArrowLeft') goBack();
+});
+</script>
+</body>
+</html>
