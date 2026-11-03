@@ -1,0 +1,156 @@
+[
+ {
+  "index": 1,
+  "file": "01_傲慢_PRIDE.png",
+  "src_x0": 18,
+  "src_y0": 130,
+  "w": 516,
+  "h": 809,
+  "ring_max": 251,
+  "ring_mean": 13.12,
+  "bytes": 750208
+ },
+ {
+  "index": 2,
+  "file": "02_嫉妒_ENVY.png",
+  "src_x0": 554,
+  "src_y0": 130,
+  "w": 515,
+  "h": 809,
+  "ring_max": 244,
+  "ring_mean": 11.18,
+  "bytes": 696409
+ },
+ {
+  "index": 3,
+  "file": "03_暴怒_WRATH.png",
+  "src_x0": 1090,
+  "src_y0": 130,
+  "w": 516,
+  "h": 809,
+  "ring_max": 242,
+  "ring_mean": 11.58,
+  "bytes": 681170
+ },
+ {
+  "index": 4,
+  "file": "04_怠惰_SLOTH.png",
+  "src_x0": 1626,
+  "src_y0": 130,
+  "w": 516,
+  "h": 809,
+  "ring_max": 249,
+  "ring_mean": 8.74,
+  "bytes": 716301
+ },
+ {
+  "index": 5,
+  "file": "05_贪婪_GREED.png",
+  "src_x0": 18,
+  "src_y0": 964,
+  "w": 516,
+  "h": 811,
+  "ring_max": 240,
+  "ring_mean": 14.75,
+  "bytes": 747466
+ },
+ {
+  "index": 6,
+  "file": "06_暴食_GLUTTONY.png",
+  "src_x0": 554,
+  "src_y0": 964,
+  "w": 515,
+  "h": 811,
+  "ring_max": 243,
+  "ring_mean": 12.39,
+  "bytes": 722241
+ },
+ {
+  "index": 7,
+  "file": "07_色欲_LUST.png",
+  "src_x0": 1090,
+  "src_y0": 964,
+  "w": 516,
+  "h": 811,
+  "ring_max": 245,
+  "ring_mean": 15.82,
+  "bytes": 727068
+ },
+ {
+  "index": 8,
+  "file": "08_谦逊_HUMILITY.png",
+  "src_x0": 18,
+  "src_y0": 1927,
+  "w": 516,
+  "h": 814,
+  "ring_max": 250,
+  "ring_mean": 14.37,
+  "bytes": 719035
+ },
+ {
+  "index": 9,
+  "file": "09_仁慈_KINDNESS.png",
+  "src_x0": 554,
+  "src_y0": 1927,
+  "w": 515,
+  "h": 814,
+  "ring_max": 255,
+  "ring_mean": 14.51,
+  "bytes": 765589
+ },
+ {
+  "index": 10,
+  "file": "10_贞洁_CHASTITY.png",
+  "src_x0": 1090,
+  "src_y0": 1927,
+  "w": 516,
+  "h": 814,
+  "ring_max": 238,
+  "ring_mean": 13.89,
+  "bytes": 741193
+ },
+ {
+  "index": 11,
+  "file": "11_勤勉_DILIGENCE.png",
+  "src_x0": 1626,
+  "src_y0": 1927,
+  "w": 516,
+  "h": 814,
+  "ring_max": 251,
+  "ring_mean": 11.62,
+  "bytes": 765357
+ },
+ {
+  "index": 12,
+  "file": "12_节制_TEMPERANCE.png",
+  "src_x0": 18,
+  "src_y0": 2767,
+  "w": 516,
+  "h": 858,
+  "ring_max": 244,
+  "ring_mean": 16.34,
+  "bytes": 798097
+ },
+ {
+  "index": 13,
+  "file": "13_慈爱_CHARITY.png",
+  "src_x0": 554,
+  "src_y0": 2767,
+  "w": 515,
+  "h": 858,
+  "ring_max": 254,
+  "ring_mean": 13.99,
+  "bytes": 781097
+ },
+ {
+  "index": 14,
+  "file": "14_忍耐_PATIENCE.png",
+  "src_x0": 1090,
+  "src_y0": 2767,
+  "w": 516,
+  "h": 858,
+  "ring_max": 239,
+  "ring_mean": 11.83,
+  "bytes": 774311
+ }
+]

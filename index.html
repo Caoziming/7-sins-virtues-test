@@ -106,6 +106,30 @@
   .track .t-s { background: linear-gradient(90deg, #3c3c46, #0e0e14); transition: width .4s; }
   .axis-note { font-size: 11px; color: #8c8c96; margin-top: 4px; }
   .retry { margin-top: 8px; }
+  .codex { margin-bottom: 4px; }
+  .codex-title { text-align: center; font-size: 14px; letter-spacing: 6px; color: #d8b878; margin-bottom: 10px; }
+  .codex-row-title { font-size: 11px; letter-spacing: 3px; color: #8c8c96; margin: 8px 0 6px; }
+  .codex-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .codex-card { margin: 0; cursor: zoom-in; }
+  .codex-card img {
+    width: 100%; display: block; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,.08);
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+  }
+  .codex-card:hover img { transform: translateY(-2px); border-color: rgba(255,255,255,.25); }
+  .codex-card figcaption { font-size: 10px; text-align: center; color: #aeaeb8; margin-top: 3px; }
+  .codex-card.hl-sin img { border-color: rgba(200,200,230,.65); box-shadow: 0 0 10px rgba(190,190,220,.25); }
+  .codex-card.hl-sin figcaption { color: #eceaf2; }
+  .codex-card.hl-virt img { border-color: rgba(216,184,120,.8); box-shadow: 0 0 10px rgba(216,184,120,.3); }
+  .codex-card.hl-virt figcaption { color: #e8cd96; }
+  #lightbox {
+    position: fixed; inset: 0; background: rgba(6,6,10,.93);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 100; cursor: zoom-out; padding: 16px;
+  }
+  #lightbox.show { display: flex; }
+  #lightbox img { max-height: 78vh; max-width: 86vw; border-radius: 12px; border: 1px solid rgba(255,255,255,.18); }
+  #lightbox .lb-cap { margin-top: 14px; font-size: 15px; letter-spacing: 4px; color: #dcdce2; }
   .radar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
   .radar-box { border: 1px solid #2e2e38; border-radius: 12px; background: #191922; padding: 12px 6px 2px; }
   .radar-title { text-align: center; font-size: 12px; letter-spacing: 4px; color: #8c8c96; margin-bottom: 2px; }
@@ -412,6 +436,7 @@ function renderResult(ansByQ, shared) {
   html +=
     '<div class="result-headline">' + t[1] + '</div>' +
     '<div class="result-sub">罪德均势指数: <b>' + avg + '</b> / 100(越高越偏「罪」) · ' + t[2] + '</div>' +
+    buildCodex(topSin, topV) +
     '<div class="top-boxes">' +
       '<div class="top-box sin"><div class="label">你的主罪</div><div class="name">' + AXES[topSin].sin + '</div><div class="quote">' + AXES[topSin].sinQuote + '</div></div>' +
       '<div class="top-box virtue"><div class="label">你的主德</div><div class="name">' + AXES[topV].virtue + '</div><div class="quote">' + AXES[topV].virtueQuote + '</div></div>' +
@@ -526,6 +551,58 @@ function toast(msg) {
   el._t = setTimeout(() => el.classList.remove('show'), 2000);
 }
 
+// ---- 图鉴卡牌 (static/ 目录, 顺序与 AXES 对齐) ----
+const SIN_IMGS = [
+  { f: '01_傲慢_PRIDE.png', n: '傲慢' },
+  { f: '02_嫉妒_ENVY.png', n: '嫉妒' },
+  { f: '03_暴怒_WRATH.png', n: '暴怒' },
+  { f: '04_怠惰_SLOTH.png', n: '怠惰' },
+  { f: '05_贪婪_GREED.png', n: '贪婪' },
+  { f: '06_暴食_GLUTTONY.png', n: '暴食' },
+  { f: '07_色欲_LUST.png', n: '色欲' },
+];
+// 美德卡牌按 AXES 的美德顺序排列: 谦卑/善良/耐心/勤勉/慷慨/节制/贞洁
+const VIR_IMGS = [
+  { f: '08_谦逊_HUMILITY.png', n: '谦逊' },
+  { f: '09_仁慈_KINDNESS.png', n: '仁慈' },
+  { f: '14_忍耐_PATIENCE.png', n: '忍耐' },
+  { f: '11_勤勉_DILIGENCE.png', n: '勤勉' },
+  { f: '13_慈爱_CHARITY.png', n: '慈爱' },
+  { f: '12_节制_TEMPERANCE.png', n: '节制' },
+  { f: '10_贞洁_CHASTITY.png', n: '贞洁' },
+];
+
+function buildCodex(topSin, topV) {
+  const row = (title, imgs, hl, cls) =>
+    '<div class="codex-row-title">' + title + '</div>' +
+    '<div class="codex-row">' +
+    imgs.map((it, i) =>
+      '<figure class="codex-card' + (i === hl ? ' ' + cls : '') + '" onclick="openCard(\'static/' + it.f + '\', \'' + it.n + '\')">' +
+        '<img src="static/' + it.f + '" alt="' + it.n + '" loading="lazy">' +
+        '<figcaption>' + it.n + '</figcaption>' +
+      '</figure>').join('') +
+    '</div>';
+  return '<div class="codex">' +
+    '<div class="codex-title">罪 德 图 鉴</div>' +
+    row('七宗罪', SIN_IMGS, topSin, 'hl-sin') +
+    row('七美德', VIR_IMGS, topV, 'hl-virt') +
+  '</div>';
+}
+
+function openCard(src, name) {
+  let lb = document.getElementById('lightbox');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.id = 'lightbox';
+    lb.innerHTML = '<img alt=""><div class="lb-cap"></div>';
+    lb.onclick = () => lb.classList.remove('show');
+    document.body.appendChild(lb);
+  }
+  lb.querySelector('img').src = src;
+  lb.querySelector('.lb-cap').textContent = name;
+  lb.classList.add('show');
+}
+
 // ---- 七维雷达图 (纯 SVG, 零依赖) ----
 function radarSvg(values, labels, stroke, fill, valueColor) {
   const C = 150, R = 94, N = values.length;
@@ -574,6 +651,9 @@ document.addEventListener('keydown', e => {
   if (document.getElementById('quiz').style.display === 'none') return;
   if (e.key >= '1' && e.key <= '5') answer(+e.key);
   else if (e.key === 'ArrowLeft') goBack();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { const lb = document.getElementById('lightbox'); if (lb) lb.classList.remove('show'); }
 });
 </script>
 </body>
