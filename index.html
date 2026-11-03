@@ -113,7 +113,7 @@
   .codex-card { margin: 0; cursor: zoom-in; }
   .codex-card img {
     width: 100%; display: block; border-radius: 6px;
-    aspect-ratio: 516 / 814; object-fit: cover;
+    aspect-ratio: 170 / 648; object-fit: cover;
     border: 1px solid rgba(255,255,255,.08);
     transition: transform .15s, box-shadow .15s, border-color .15s;
   }
@@ -554,23 +554,23 @@ function toast(msg) {
 
 // ---- 图鉴卡牌 (static/ 目录, 顺序与 AXES 对齐) ----
 const SIN_IMGS = [
-  { f: '01_傲慢_PRIDE.png', n: '傲慢' },
-  { f: '02_嫉妒_ENVY.png', n: '嫉妒' },
-  { f: '03_暴怒_WRATH.png', n: '暴怒' },
-  { f: '04_怠惰_SLOTH.png', n: '怠惰' },
-  { f: '05_贪婪_GREED.png', n: '贪婪' },
-  { f: '06_暴食_GLUTTONY.png', n: '暴食' },
-  { f: '07_色欲_LUST.png', n: '色欲' },
+  { f: '01_傲慢_Pride.png', n: '傲慢' },
+  { f: '02_嫉妒_Envy.png', n: '嫉妒' },
+  { f: '03_暴怒_Wrath.png', n: '暴怒' },
+  { f: '04_怠惰_Sloth.png', n: '怠惰' },
+  { f: '05_贪婪_Greed.png', n: '贪婪' },
+  { f: '06_暴食_Gluttony.png', n: '暴食' },
+  { f: '07_色欲_Lust.png', n: '色欲' },
 ];
 // 美德卡牌按 AXES 的美德顺序排列: 谦卑/善良/耐心/勤勉/慷慨/节制/贞洁
 const VIR_IMGS = [
-  { f: '08_谦逊_HUMILITY.png', n: '谦逊' },
-  { f: '09_仁慈_KINDNESS.png', n: '仁慈' },
-  { f: '14_忍耐_PATIENCE.png', n: '忍耐' },
-  { f: '11_勤勉_DILIGENCE.png', n: '勤勉' },
-  { f: '13_慈爱_CHARITY.png', n: '慈爱' },
-  { f: '12_节制_TEMPERANCE.png', n: '节制' },
-  { f: '10_贞洁_CHASTITY.png', n: '贞洁' },
+  { f: '08_谦逊_Humility.png', n: '谦逊' },
+  { f: '09_仁爱_Kindness.png', n: '仁爱' },
+  { f: '10_耐心_Patience.png', n: '耐心' },
+  { f: '11_勤勉_Diligence.png', n: '勤勉' },
+  { f: '12_慷慨_Charity.png', n: '慷慨' },
+  { f: '13_节制_Temperance.png', n: '节制' },
+  { f: '14_贞洁_Chastity.png', n: '贞洁' },
 ];
 
 function buildCodex(topSin, topV) {
